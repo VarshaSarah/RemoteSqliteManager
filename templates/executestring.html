@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<!-- <html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action ='/connection/' method="post">{% csrf_token %}
+    <ul>
+        {{form.as_ul}}
+    </ul>
+    <input type="submit" name = "sys" value = "Connect">
+</form>
+</body>
+</html>
+
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>REMOTE SQLITE CONNECT</title>
+<style type="text/css">
+body {
+background-color: #f4f4f4;
+color: #5a5656;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+font-size: 16px;
+line-height: 1.5em;
+}
+a { text-decoration: none; }
+h1 { font-size: 1em; }
+h1, p {
+margin-bottom: 10px;
+}
+strong {
+font-weight: bold;
+}
+.uppercase { text-transform: uppercase; }
+
+/* ---------- LOGIN ---------- */
+#login {
+margin: 50px auto;
+width: 300px;
+}
+form fieldset input[type="text"], input[type="password"] {
+background-color: #e5e5e5;
+border: none;
+border-radius: 3px;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+color: #5a5656;
+//color: #f4f4f4
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+font-size: 14px;
+height: 50px;
+outline: none;
+padding: 0px 10px;
+width: 280px;
+-webkit-appearance:none;
+}
+form fieldset input[type="submit"] {
+background-color: #008dde;
+border: none;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+
+color: #f4f4f4;
+cursor: pointer;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+height: 50px;
+text-transform: uppercase;
+width: 300px;
+-webkit-appearance:none;
+}
+form fieldset a {
+color: #5a5656;
+font-size: 10px;
+}
+form fieldset a:hover { text-decoration: underline; }
+.btn-round {
+background-color: #5a5656;
+border-radius: 50%;
+-moz-border-radius: 50%;
+-webkit-border-radius: 50%;
+color: #f4f4f4;
+display: block;
+font-size: 12px;
+height: 50px;
+line-height: 50px;
+margin: 30px 125px;
+text-align: center;
+text-transform: uppercase;
+width: 50px;
+}
+.facebook-before {
+background-color: #0064ab;
+border-radius: 3px 0px 0px 3px;
+-moz-border-radius: 3px 0px 0px 3px;
+-webkit-border-radius: 3px 0px 0px 3px;
+color: #f4f4f4;
+display: block;
+float: left;
+height: 50px;
+line-height: 50px;
+text-align: center;
+width: 50px;
+}
+.facebook {
+background-color: #0079ce;
+border: none;
+border-radius: 0px 3px 3px 0px;
+-moz-border-radius: 0px 3px 3px 0px;
+-webkit-border-radius: 0px 3px 3px 0px;
+color: #f4f4f4;
+cursor: pointer;
+height: 50px;
+text-transform: uppercase;
+width: 250px;
+}
+.twitter-before {
+background-color: #189bcb;
+border-radius: 3px 0px 0px 3px;
+-moz-border-radius: 3px 0px 0px 3px;
+-webkit-border-radius: 3px 0px 0px 3px;
+color: #f4f4f4;
+display: block;
+float: left;
+height: 50px;
+line-height: 50px;
+text-align: center;
+width: 50px;
+}
+.twitter {
+background-color: #1bb2e9;
+border: none;
+border-radius: 0px 3px 3px 0px;
+-moz-border-radius: 0px 3px 3px 0px;
+-webkit-border-radius: 0px 3px 3px 0px;
+color: #f4f4f4;
+cursor: pointer;
+height: 50px;
+text-transform: uppercase;
+width: 250px;
+}
+
+
+#display {
+margin: 50px auto;
+width: 300px;
+}
+
+table, td {
+    border: 1px solid black;
+    margin: 50px auto;
+width: 300px;
+
+}
+
+
+</style>
+</head>
+<body>
+
+<div id="login">
+<h1><strong>Welcome.</strong> </h1>
+
+<form action="/execute/" method="post">{% csrf_token %}
+
+<fieldset>
+
+<p>Query: {{ form_sql.query }}</p>
+<p><input type="submit" value="SUBMIT"/></p>
+</fieldset>
+
+</form>
+</div>
+<form action="/commit/" method="post">{% csrf_token %}
+    <input type="submit" href="/commit/" value = "Commit">
+</form>
+<form action="/rollback/" method="post">{% csrf_token %}
+    <input type="submit" href="/rollback/" value = "Rollback">
+</form>
+
+
+
+<table id="mytables">
+
+
+</table>
+
+
+<table id="myschema">
+
+
+</table>
+<table id="myTable">
+
+
+</table>
+
+
+
+<script>
+
+var obj={{ table_records | safe}};
+
+for( var key in obj)
+{
+    if(key == "tables")
+    {
+    //document.write("tables section");
+
+    //printtable(obj[key],i);
+   // i= i+1
+   i=0;
+   printtable(obj[key],i);
+
+
+
+
+    }
+    else if(key == "schema")
+    {
+        i=0;
+       // document.write("SCHEMA SECTION");
+        printschema(obj[key],i);
+
+    }
+    else
+    {
+        i=0;
+        //document.write("records SECTION");
+        printrecords(obj[key],i);
+    }
+
+}
+
+
+function printtable(list_tables,row_no)
+{
+
+var table = document.getElementById("mytables");
+
+for(var index in list_tables)
+ {
+   var len = (list_tables[index]).length;
+   var row = table.insertRow(row_no++);
+   for(count=0;count<len;count++)
+   {
+
+    var cell1 = row.insertCell(count);
+    cell1.innerHTML = ((list_tables[index])[count]);
+   }
+
+ }
+
+}
+
+
+
+function printschema(list_schema,row_no)
+{
+var table = document.getElementById("myschema");
+for(var index in list_schema)
+ {
+
+    var len = (list_schema[index]).length;
+    var row = table.insertRow(row_no++);
+    for(count=0;count<len;count++)
+    {
+
+        var cell1 = row.insertCell(count);
+        cell1.innerHTML = ((list_schema[index])[count]);
+    }
+
+
+
+
+
+
+ }
+
+}
+
+function printrecords(val,no)
+{
+//document.write(val);
+//document.write(no);
+
+
+ var table = document.getElementById("myTable");
+ //var splitstring = val.split(,);
+ //var len = val.length;
+
+ for(var index in val)
+ {
+
+ var len = (val[index]).length;
+ //var row = table.insertRow(no);
+
+ var row = table.insertRow(no++);
+ for(count=0;count<len;count++)
+ {
+
+   var cell1 = row.insertCell(count);
+   cell1.innerHTML = ((val[index])[count]);
+ }
+
+ }
+
+
+    //var cell1 = row.insertCell(0);
+
+    //cell1.innerHTML = val[0];
+
+}
+
+</script>
+
+
+
+
+
+</body>
+</html>
+    <!--
+<form action="/connection/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.hostname.errors }}
+        <label for="id_subject">E-mail subject:</label>
+        {{ form.hostname }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.password.errors }}
+        <label for="id_message">Your message:</label>
+        {{ form.password }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.ipaddress.errors }}
+        <label for="id_sender">Your email address:</label>
+        {{ form.ipaddress }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.dbpath.errors }}
+        <label for="id_cc_myself">CC yourself?</label>
+        {{ form.dbpath }}
+    </div>
+    <p><input type="submit" value="Send message" /></p>
+</form>
+
+-->
+
+
+
+<!-- <form action="javascript:void(0);" method="get"> -->
+<!-- <form action="login.py" method="get"> -->
+<!--<form action ='/connection/' method="post">{% csrf_token %}
+
+<fieldset>
+<p><input type="text" required value="Username" onBlur="if(this.value=='')this.value='Username'" onFocus="if(this.value=='Username')this.value='' "></p>
+<p><input type="password" required value="Password" onBlur="if(this.value=='')this.value='Password'" onFocus="if(this.value=='Password')this.value='' "></p>
+<p><input type="text" required value="IP address" onBlur="if(this.value=='')this.value='IP address'" onFocus="if(this.value=='IP address')this.value='' "></p>
+<p><input type="text" required value="DBpath" onBlur="if(this.value=='')this.value='DBpath'" onFocus="if(this.value=='DBpath')this.value='' "></p>
+<p><input type="text" required value="DBname" onBlur="if(this.value=='')this.value='DBname'" onFocus="if(this.value=='DBname')this.value='' "></p>
+<!--form["hostname"] = Username
+    form["password"] = Password
+    form["ipaddress"] = IP address
+    form["dbpath"] = DBpath
+<p><a href="#">Forgot Password?</a></p>
+-->
+<!--    <p><input type="submit" name = "sys" value="Login"></p>
+</fieldset>
+</form>
+<!-- <p><span class="btn-round">or</span></p>
+<p>
+<!--<a class="facebook-before"></a>
+<button class="facebook">Login Using Facbook</button>
+</p>
+<p>
+<a class="twitter-before"></a>
+<button class="twitter">Login Using Twitter</button>
+</p>
+</div> <!-- end login -->
+
+
+
+<!--<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action ='/connection/' method="post">{% csrf_token %}
+    <ul>
+        {{form.as_ul}}
+    </ul>
+    <input type="submit" name = "sys" value = "Connect">
+</form>
+</body>
+</html>

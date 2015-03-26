@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{% static 'assets/css/signin.css' %}" rel="stylesheet" type="text/css" media="screen">
+    <title>RSQLITE Login</title>
+    </head>
+    <body>
+        <h2>Please Login</h2>
+
+        <form class="form-horizontal" action="/login/" method="post">{% csrf_token %}
+          <div id="form-div">
+
+          <div class="form-group">
+            <label for="inputhostname" class="col-sm-2 control-label">Hostname</label>
+            <div class="col-sm-4">
+              <p id="field"> {{ form_sys.hostname }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputpassword" class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-4">
+              <p id="field"> {{ form_sys.password }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputipaddress" class="col-sm-2 control-label">Ipaddress</label>
+            <div class="col-sm-4">
+              <p id="field"> {{ form_sys.ipaddress }}</p>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+             <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+            </div>
+          </div>
+          </div>
+        </form>
+    </body>
+</html>

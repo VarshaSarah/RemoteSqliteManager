@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>RSQLite</title>
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{% static 'assets/css/signin.css' %}" rel="stylesheet" type="text/css" media="screen">
+</head>
+<body>
+
+<script language="JavaScript1.3">
+
+
+    document.write("<input type='button' name= 'checked' value=select onclick='selectradio()'></input>");
+
+    function onradio(val)
+    {
+        var table = document.getElementById("dbtable");
+
+                    var rowCount = table.rows.length;
+                    var row = table.insertRow(rowCount);
+
+
+                    row.insertCell(0).innerHTML= '<input id = "dbtablecell" name = "clicked" type="radio" value = "' + val + '" >';
+
+                    row.insertCell(1).innerHTML= "J";
+                    row.insertCell(2).innerHTML= val;
+
+    }
+
+    function selectradio()
+    {
+        var p=document.getElementsByName('clicked');
+
+        for(var k=0;k < p.length;k++)
+        {
+            if(p[k].checked)
+            {
+            var object = p[k].value;
+            pathname=object.toString();
+
+
+            urlname = "http://0.0.0.0:8080/gotpath/"+pathname+"/" ;
+            window.open(urlname);
+            }
+        }
+
+    }
+</script>
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Panel heading</div>
+
+  <!-- Table -->
+  <table id="dbtable" class="table">
+
+
+        <tbody>
+
+                <script>
+                var obj={{ list_of_paths | safe}};
+
+                for (var key in obj)
+                {
+
+                    onradio(obj[key]);
+
+                }
+
+                </script>
+
+        </tbody>
+
+  </table>
+</div>
+
+
+
+</body>
+</html>
